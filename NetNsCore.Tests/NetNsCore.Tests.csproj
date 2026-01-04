@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../NetNsCore.props" />
+  <ItemGroup>
+    <PackageReference Include="MSTest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetNsCore\NetNsCore.csproj" />
+  </ItemGroup>
+</Project>

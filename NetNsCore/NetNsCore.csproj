@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="../NetNsCore.props" />
+  <PropertyGroup>
+    <IsAotCompatible>true</IsAotCompatible>
+    <Version>0.1.0</Version>
+    <PackageVersion>$(Version)</PackageVersion>
+    <Authors>Vasyl Novikov</Authors>
+    <Description>Linux network namespace utilities</Description>
+    <Copyright>Vasyl Novikov</Copyright>
+    <PackageProjectUrl>https://github.com/VasiliyNovikov/NetNsCore</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/VasiliyNovikov/NetNsCore</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>linux;netns</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="LinuxCore" />
+  </ItemGroup>
+</Project>

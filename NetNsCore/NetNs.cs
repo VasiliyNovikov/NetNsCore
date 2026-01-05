@@ -10,8 +10,8 @@ namespace NetNsCore;
 
 public sealed class NetNs : IDisposable, IEquatable<NetNs>, IEqualityOperators<NetNs, NetNs, bool>
 {
-    private const LinuxFileMode NetNsBasePathMode = (LinuxFileMode)0755;
-    private const LinuxFileMode NetNsFileMode = (LinuxFileMode)0644;
+    private const LinuxFileMode NetNsBasePathMode = (LinuxFileMode)0x1ED; // 0755
+    private const LinuxFileMode NetNsFileMode = (LinuxFileMode)0x124; // 0444
     private const string NetNsBasePath = "/run/netns";
     private const string SelfThreadNsNetPath = "/proc/thread-self/ns/net";
     private const string SelfThreadFdPath = "/proc/thread-self/fd";

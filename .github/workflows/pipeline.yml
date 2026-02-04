@@ -54,9 +54,7 @@ jobs:
 
       - name: Package Version
         id: package_version
-        run: |
-          version=$(dotnet run ./.github/workflows/package_version.cs)
-          echo "version=$version" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(dotnet ./.github/workflows/PackageVersion.cs)" >> "$GITHUB_OUTPUT"
 
       - name: Pack
         run: dotnet pack ./NetNsCore/NetNsCore.csproj -c Release --no-build -p:Version=${{ steps.package_version.outputs.version }}

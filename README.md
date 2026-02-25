@@ -35,5 +35,9 @@ NetNs.Delete("my_ns");
 | `EnterRoot()` | Enter the root namespace |
 | `ns.Enter()` | Enter via handle |
 | `ns.Clone()` | Clone handle (duplicates the file descriptor) |
+| `ns.CreateSocket(af, type, proto)` | Create a `Socket` inside this namespace |
+| `ns.CreateSocket(type, proto)` | Create a dual-mode `Socket` inside this namespace |
+| `CreateSocket(name, af, type, proto)` | Create a `Socket` inside a named namespace |
+| `CreateSocket(name, type, proto)` | Create a dual-mode `Socket` inside a named namespace |
 | `ns.Id` | Unique `UInt128` identifier |
 | `ns.Descriptor` | Underlying `FileDescriptor` |

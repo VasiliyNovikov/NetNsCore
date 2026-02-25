@@ -24,14 +24,13 @@ public sealed class NetNs : IDisposable, IEquatable<NetNs>, IEqualityOperators<N
     public FileDescriptor Descriptor => _nsFile.Descriptor;
 
     private NetNs(string path) => _nsFile = new LinuxFile(path, LinuxFileFlags.ReadOnly);
+    private NetNs(FileDescriptor descriptor) => _nsFile = new LinuxFile(descriptor);
 
     public void Dispose() => _nsFile.Dispose();
 
-    public NetNs Clone()
-    {
-        using (Enter(this))
-            return OpenCurrent();
-    }
+    public NetNs Clone() => new(Descriptor.Clone());
+
+    public Scope Enter() => new(this);
 
     public override int GetHashCode() => _nsFile.INode.GetHashCode();
 
@@ -71,7 +70,7 @@ public sealed class NetNs : IDisposable, IEquatable<NetNs>, IEqualityOperators<N
             }
             finally
             {
-                Set(oldNs);
+                oldNs.Set();
             }
         }
         catch
@@ -103,18 +102,16 @@ public sealed class NetNs : IDisposable, IEquatable<NetNs>, IEqualityOperators<N
 
     public static string[] List() => Directory.Exists(NetNsBasePath) ? Directory.GetFiles(NetNsBasePath) : [];
 
-    public static Scope Enter(NetNs ns) => new(ns);
-
     public static Scope Enter(string name)
     {
         using var ns = Open(name);
-        return Enter(ns);
+        return ns.Enter();
     }
 
     public static Scope EnterRoot()
     {
         using var ns = OpenRoot();
-        return Enter(ns);
+        return ns.Enter();
     }
 
     public static NetNs OpenCurrent() => new(SelfThreadNsNetPath);
@@ -123,23 +120,23 @@ public sealed class NetNs : IDisposable, IEquatable<NetNs>, IEqualityOperators<N
 
     public static NetNs Open(string name) => new(Path.Combine(NetNsBasePath, name));
 
-    private static void Set(NetNs ns) => LibC.setns(ns.Descriptor, LibC.CLONE_NEWNET).ThrowIfError();
+    private void Set() => LibC.setns(Descriptor, LibC.CLONE_NEWNET).ThrowIfError();
 
-    public readonly struct Scope : IDisposable
+    public readonly ref struct Scope : IDisposable
     {
         private readonly NetNs _old;
 
         internal Scope(NetNs ns)
         {
             _old = OpenCurrent();
-            Set(ns);
+            ns.Set();
         }
 
         public void Dispose()
         {
             try
             {
-                Set(_old);
+                _old.Set();
             }
             finally
             {

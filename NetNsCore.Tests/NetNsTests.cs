@@ -98,6 +98,24 @@ public class NetNsTests
         }
     }
 
+    [TestMethod]
+    public void NetNs_Clone()
+    {
+        const string testNsName = "test_ns_6";
+        try
+        {
+            Script.Exec("ip", "netns", "add", testNsName);
+            using var ns = NetNs.Open(testNsName);
+            using var cloneNs = ns.Clone();
+            Assert.AreEqual(ns.Id, cloneNs.Id);
+            Assert.AreNotEqual(ns.Descriptor, cloneNs.Descriptor);
+        }
+        finally
+        {
+            Script.ExecNoThrow("ip", "netns", "delete", testNsName);
+        }
+    }
+
     private static bool IsNetNsExists(string nsName)
     {
         return Script.ExecLines("ip", "netns", "list").Any(n => n.StartsWith(nsName, StringComparison.Ordinal));

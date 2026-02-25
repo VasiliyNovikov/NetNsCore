@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Numerics;
 
 using LinuxCore;
@@ -119,6 +120,30 @@ public sealed class NetNs : IDisposable, IEquatable<NetNs>, IEqualityOperators<N
     public static NetNs OpenRoot() => new(RootNsNetPath);
 
     public static NetNs Open(string name) => new(Path.Combine(NetNsBasePath, name));
+
+    public Socket CreateSocket(AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
+    {
+        using (Enter())
+            return new Socket(addressFamily, socketType, protocolType);
+    }
+
+    public Socket CreateSocket(SocketType socketType, ProtocolType protocolType)
+    {
+        using (Enter())
+            return new Socket(socketType, protocolType);
+    }
+
+    public static Socket CreateSocket(string name, AddressFamily addressFamily, SocketType socketType, ProtocolType protocolType)
+    {
+        using var ns = Open(name);
+        return ns.CreateSocket(addressFamily, socketType, protocolType);
+    }
+
+    public static Socket CreateSocket(string name, SocketType socketType, ProtocolType protocolType)
+    {
+        using var ns = Open(name);
+        return ns.CreateSocket(socketType, protocolType);
+    }
 
     private void Set() => LibC.setns(Descriptor, LibC.CLONE_NEWNET).ThrowIfError();
 
